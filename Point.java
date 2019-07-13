@@ -38,11 +38,14 @@ public class Point implements Comparable<Point> {
         {
             if(this.x == that.x)
                 return Double.NEGATIVE_INFINITY;
+            else
+                return 0;
         }
         double slope = (double)(this.y - that.y)/(this.x - that.x);
         return slope;
     }
 
+    // Compares with another point - First on the basis of y-coordinates, then breaking ties using x-coordinates
     public int compareTo(Point that) {
         if(this.y == that.y)
         {
@@ -54,6 +57,7 @@ public class Point implements Comparable<Point> {
         }
     }
 
+    // Compares two points - based on slope made with the reference point, from which function is called
     public Comparator<Point> slopeOrder() {
         return new compr();
     }
@@ -67,12 +71,12 @@ public class Point implements Comparable<Point> {
         }
     }
 
-    public String toString() {
-        /* DO NOT MODIFY */
-        return "(" + x + ", " + y + ")";
-    }
+    // Returns a simple string giving x and y coordinates of point
+    public String toString() { return "(" + x + ", " + y + ")";}
 
     public static void main(String[] args) {
+
+        // This code reads points from a file.
         In in = new In(args[0]);
         int num_pt = in.readInt();
         Point[] points = new Point[num_pt];
@@ -88,23 +92,25 @@ public class Point implements Comparable<Point> {
             if (y_coord > max_coord) max_coord = y_coord;
             StdOut.print((i+1));
         }
+
         /*
-        int max_coord = 0;
+        // This code reads points from StdIn.
+
         if(args.length != 1)
         {
             throw new IllegalArgumentException(" One and only one argument, for number of points is expected.");
         }
 
+        int max_coord = 0;
         int num_pt = Integer.parseInt(args[0]);
-
-        StdOut.println(" Enter values of x and y coordinates.");
         Point points[] = new Point[num_pt];
+
         for(int i = 0; i < num_pt; i++)
         {
             int x_coord, y_coord;
-            StdOut.print(" Enter x-coordinate of point number " + (i + 1) + " : ");
+            StdOut.print(" Enter x-coordinate of point number " + (i + 1) + " of " + num_pt + " : ");
             x_coord = StdIn.readInt();
-            StdOut.print(" Enter y-coordinate of point number " + (i + 1) + " : ");
+            StdOut.print(" Enter y-coordinate of point number " + (i + 1) + " of " + num_pt + " : ");
             y_coord = StdIn.readInt();
             points[i] = new Point(x_coord, y_coord);
             StdOut.println();
@@ -115,6 +121,7 @@ public class Point implements Comparable<Point> {
 
         }
         */
+
         for(int i= 0; i < num_pt; i++)
         {
             StdOut.println(" String representation of point " + i + ":" + points[i].toString());
