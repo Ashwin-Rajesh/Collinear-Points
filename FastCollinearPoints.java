@@ -14,11 +14,11 @@ public class FastCollinearPoints {
     {
         final int pt_no = points.length;
         ln_no = 0;
-        lines = new LineSegment[pt_no * (pt_no -1 )/2];
+        lines = new LineSegment[pt_no * (pt_no - 1) / 2];
 
         Arrays.sort(points,Point::compareTo);
 
-        // To handle corner case of occurrence of duplicate point
+        // To occurrence of duplicate points
         for(int i = 0; i < pt_no; i++)
             if(i < pt_no -1)
                 if(points[i].slopeTo(points[i+1]) == Double.NEGATIVE_INFINITY)
@@ -28,17 +28,6 @@ public class FastCollinearPoints {
         {
             Point[] sample_points = Arrays.copyOfRange(points, i + 1, pt_no);
             Arrays.sort(sample_points,points[i].slopeOrder());
-
-            /* StdOut.print("S.no " + (i + 1) + " : compared with " + points[i].toString() + ". Sorted order : ");
-
-            for(int j = 0; j < pt_no - i -1; j++)
-            {
-                StdOut.print(sample_points[j].toString() + "," + sample_points[j].slopeTo(points[i]));
-            }
-            StdOut.println();
-
-            StdOut.println("");
-            */
 
             for(int j = 0; j < pt_no - i -3; j++)
             {
@@ -62,11 +51,10 @@ public class FastCollinearPoints {
 
     public static void main(String[] args) {
 
+        int max_coord = 0;
+        // This code retrieves information about points from a file.
         In in = new In(args[0]);
         int num_pt = in.readInt();
-        int num_ln;
-        int max_coord = 0;
-        FastCollinearPoints Collinear_points;
         Point[] points = new Point[num_pt];
 
         StdOut.println(" Loaded file - " + args[0] + " . Reading file for " + num_pt + "points.");
@@ -81,6 +69,11 @@ public class FastCollinearPoints {
             StdOut.print((i+1));
         }
         /*
+        // This code retrieves information about points from StdIn.
+        int num_pt = args[0];
+        int max_coords = 0;
+        Point[] points = new Point[num_pt];
+
         for (int i = 0; i < num_pt; i++) {
             int x_coord, y_coord;
             StdOut.print(" Enter x-coordinate of point number " + (i + 1) + " of " + num_pt + " : ");
@@ -105,9 +98,8 @@ public class FastCollinearPoints {
         }
         StdOut.println("-----------------------------------------------------------------------------");
 
-        Collinear_points = new FastCollinearPoints(points);
-
-        num_ln = Collinear_points.numberOfSegments();
+        FastCollinearPoints Collinear_points = new FastCollinearPoints(points);
+        final int num_ln = Collinear_points.numberOfSegments();
         LineSegment[] lines = Collinear_points.segments();
 
         StdOut.println(" There are " + num_ln + " collinear lines in the given sample.");
@@ -118,6 +110,7 @@ public class FastCollinearPoints {
             StdOut.println(lines[i].toString());
         }
 
+        // Initialising StdDraw
         StdDraw.enableDoubleBuffering();
         StdDraw.setXscale(-max_coord - (double) max_coord / 20, max_coord + (double) max_coord / 20);
         StdDraw.setYscale(-max_coord - (double) max_coord / 20, max_coord + (double) max_coord / 20);
