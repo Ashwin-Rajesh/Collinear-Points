@@ -8,21 +8,29 @@ public class BruteCollinearPoints {
     private int ln_no;
     private LineSegment[] lines;
 
-    public BruteCollinearPoints(Point[] points)
+    public BruteCollinearPoints(Point[] arg_points)
     {
-        final int pt_no = points.length;
+        // To handle case of passed array having less than 4 elements
+        if(arg_points.length < 4)
+            throw new IllegalArgumentException(" Array with less than 4 elements was passed.");
+
+        final int pt_no = arg_points.length;
+        Point[] points = arg_points;
         lines = new LineSegment[pt_no / 2 - 1];
         ln_no = 0;
 
         Arrays.sort(points,Point::compareTo);
 
-        // To handle corner case of occurrence of duplicate point
-        for(int i = 0; i < pt_no; i++)
-            if(i < pt_no -1)
-                if(points[i].slopeTo(points[i+1]) == Double.NEGATIVE_INFINITY)
+        // To handle occurrence of duplicate or null points
+        for(int i = 0; i < pt_no; i++) {
+            if(points[i] == null)
+                throw new IllegalArgumentException(" Array with null elements was passed.");
+            if (i < pt_no - 1)
+                if (points[i].slopeTo(points[i + 1]) == Double.NEGATIVE_INFINITY)
                     throw new IllegalArgumentException(" Duplicate points are not permitted.");
+        }
 
-        // To detect 4 - point long line segments.
+        // To detect 4 - point long line segments by iterating through all possible combinations.
         for(int i = 0; i < pt_no - 3; i++)
         {
             for(int j = i + 1; j < pt_no - 2; j++)
