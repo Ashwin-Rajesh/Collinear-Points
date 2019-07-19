@@ -25,6 +25,7 @@ public class Point implements Comparable<Point> {
         StdDraw.line(this.x, this.y, that.x, that.y);
     }
 
+    // Returns slope to some other point
     public double slopeTo(Point that) {
         if(this.x == that.x)
         {
@@ -74,101 +75,133 @@ public class Point implements Comparable<Point> {
     // Returns a simple string giving x and y coordinates of point
     public String toString() { return "(" + x + ", " + y + ")";}
 
-    public static void main(String[] args) {
-
-        // This code reads points from a file.
-        In in = new In(args[0]);
-        int num_pt = in.readInt();
-        Point[] points = new Point[num_pt];
-        int max_coord = 0;
-        StdOut.println(" Loaded file - " + args[0] + " . Reading file for " + num_pt + "points.");
-        for (int i = 0; i < num_pt; i++) {
-            int x_coord = in.readInt();
-            int y_coord = in.readInt();
-            points[i] = new Point(x_coord, y_coord);
-            if (-x_coord > max_coord) max_coord = -x_coord;
-            if (x_coord > max_coord) max_coord = x_coord;
-            if (-y_coord > max_coord) max_coord = -y_coord;
-            if (y_coord > max_coord) max_coord = y_coord;
-            StdOut.print((i+1));
-        }
-
-        /*
-        // This code reads points from StdIn.
-
-        if(args.length != 1)
+    // Static function to retrieve array of points from file or StdIn.
+    public static Point[] getpoints(String[] args)
+    {
+        if(args == null)
         {
-            throw new IllegalArgumentException(" One and only one argument, for number of points is expected.");
+            StdOut.println(" Illegal arguments received by Points.getpoints(). Getting arguments from StdIn.");
+            StdOut.println(" Enter mode of data entry f/c (f for reading from file, c for from StdIn) :");
+            args = new String[2];
+            args[0] = StdIn.readString();
+            if(args[0].equals("f"))
+            {
+                StdOut.println(" Enter name of file for data entry     :");
+                args[1] = StdIn.readString();
+            }
+            else if(args[0].equals("c"))
+            {
+                StdOut.println(" Enter number of points to be entered  :");
+                args[1] = StdIn.readString();
+            }
+            else
+            {
+                StdOut.println(" No legal arguments received. Default values are given.");
+                args[0] = "c";
+                args[1] = "5";
+            }
         }
 
-        int max_coord = 0;
-        int num_pt = Integer.parseInt(args[0]);
-        Point points[] = new Point[num_pt];
+        Point[] points;
 
-        for(int i = 0; i < num_pt; i++)
+        // Read from file mode
+        if(args[0].equals("f"))              // f for file
         {
-            int x_coord, y_coord;
-            StdOut.print(" Enter x-coordinate of point number " + (i + 1) + " of " + num_pt + " : ");
-            x_coord = StdIn.readInt();
-            StdOut.print(" Enter y-coordinate of point number " + (i + 1) + " of " + num_pt + " : ");
-            y_coord = StdIn.readInt();
-            points[i] = new Point(x_coord, y_coord);
-            StdOut.println();
-            if (-x_coord > max_coord) max_coord = -x_coord;
-            if (x_coord > max_coord) max_coord = x_coord;
-            if (-y_coord > max_coord) max_coord = -y_coord;
-            if (y_coord > max_coord) max_coord = y_coord;
+            // Initialising reader, and array.
+            In read = new In(args[1]);
+            final int num_pt = read.readInt();
+            points = new  Point[num_pt];
+            StdOut.println("Loaded file '" + args[1] + "'. Reading points...");
 
+            // Reading points
+            for(int i = 0; i < num_pt; i++)
+            {
+                int xcoord = read.readInt();
+                int ycoord = read.readInt();
+                points[i] = new Point(xcoord,ycoord);
+                StdOut.println((i + 1) + ") " + points[i].toString());
+            }
+
+            if(read.hasNextChar())
+                StdOut.println(num_pt + " points were read. File was not completely read.");
+            else
+                StdOut.println(num_pt + " points were read. File read completely");
+            read.close();
         }
-        */
-
-        for(int i= 0; i < num_pt; i++)
+        else if(args[0].equals("c"))         // c for console
         {
-            StdOut.println(" String representation of point " + i + ":" + points[i].toString());
-        }
-        StdOut.println("-----------------------------------------------------------------------------");
+            // Initialising array
+            final int num_pt = Integer.parseInt(args[1]);
+            points = new Point[num_pt];
+            StdOut.println(" Reading console for " + args[1] + " points.");
 
+            // Reading points from StdIO
+            for(int i = 0; i < num_pt; i++)
+            {
+                StdOut.print((i + 1) + "/" + num_pt + " ) ");
+                int x_coord = StdIn.readInt();
+                StdOut.print((i + 1) + "/" + num_pt + " ) ");
+                int y_coord = StdIn.readInt();
+                StdOut.println();
+                points[i] = new Point(x_coord,y_coord);
+            }
+        }
+        else
+        {
+            throw new IllegalArgumentException(" Mode not recognized.");
+        }
+
+        return points;
+    }
+
+    public static void drawpoints(Point[] arg_points, int size)
+    {
+
+        final int num_pt = arg_points.length;
+
+        // Initialising StdDraw
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setXscale(-size, size);
+        StdDraw.setYscale(-size, size);
+
+        // Drawing axes and border
+        StdDraw.setPenColor(0,0,0);
+        StdDraw.line(0,(double)-size * 98 / 100, 0, (double) size * 98 / 100);
+        StdDraw.line((double) -size * 98 / 100, 0, (double) size * 98 / 100, 0);
+        StdDraw.rectangle(0,0,(double) size * 99 / 100, (double) size * 99 / 100);
+
+        // Drawing all lines joining the points
+        StdDraw.setPenColor(128,128,128);
+        StdDraw.setPenRadius((double) size / 5000);
         for(int i = 0; i < num_pt; i++)
         {
             for(int j = i + 1; j < num_pt; j++)
             {
-                StdOut.println(" Slope between points " + points[i].toString() + " and " + points[j].toString() + " is   : " + points[i].slopeTo(points[j]));
-            }
-        }
-        StdOut.println("-----------------------------------------------------------------------------");
-
-        Arrays.sort(points, points[0].slopeOrder());
-
-        for(int i= 0; i < num_pt; i++)
-        {
-            StdOut.println(" String representation of point " + i + " after sort :" + points[i].toString());
-        }
-
-        // Initialising Draw
-        StdDraw.enableDoubleBuffering();
-        StdDraw.setXscale(-max_coord - (double) max_coord / 20, max_coord + (double) max_coord / 20);
-        StdDraw.setYscale(-max_coord - (double) max_coord / 20, max_coord + (double) max_coord / 20);
-
-        // Drawing axes
-        StdDraw.setPenColor(128, 128, 128);
-        new Point(0, max_coord).drawTo(new Point(0, -max_coord));
-        new Point(max_coord, 0).drawTo(new Point(-max_coord, 0));
-
-        // Drawing all possible lines between points
-        StdDraw.setPenColor(0, 0, 0);
-        for (int i = 0; i < num_pt; i++) {
-            for (int j = i + 1; j < num_pt; j++) {
-                points[i].drawTo(points[j]);
+                arg_points[i].drawTo(arg_points[j]);
             }
         }
 
-        // Drawing all points
-        StdDraw.setPenColor(102,255,107);
-        StdDraw.setPenRadius((double)max_coord/200);
+        // Drawing the points
+        StdDraw.setPenColor(153, 204, 0);
+        StdDraw.setPenRadius((double) size / 500);
         for(int i = 0; i < num_pt; i++)
         {
-            points[i].draw();
+            arg_points[i].draw();
         }
+
         StdDraw.show();
+    }
+
+    public static void main(String[] args) {
+        Point[] points = Point.getpoints(args);
+
+        Arrays.sort(points,points[2].slopeOrder());
+
+        for (int i = 0; i < points.length; i++)
+        {
+            StdOut.println(points[i].toString());
+        }
+
+        Point.drawpoints(points,10);
     }
 }
